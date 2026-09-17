@@ -1,0 +1,28 @@
+<div class="sidebar">
+  <div class="shop-name">Tavia's Collections</div>
+  <nav>
+    <a href="/" class="nav-link <%= currentPath === '/' ? 'active' : '' %>"><i class="ti ti-layout-dashboard"></i> Dashboard</a>
+
+    <p class="nav-section">Point of sale</p>
+    <a href="/sales/new" class="nav-link <%= currentPath === '/sales/new' ? 'active' : '' %>"><i class="ti ti-shopping-cart"></i> Record a sale</a>
+
+    <p class="nav-section">Inventory</p>
+    <a href="/products" class="nav-link <%= currentPath === '/products' ? 'active' : '' %>"><i class="ti ti-package"></i> All products</a>
+    <% if (role === 'admin') { %>
+      <a href="/products/new" class="nav-link <%= currentPath === '/products/new' ? 'active' : '' %>"><i class="ti ti-plus"></i> Add a product</a>
+    <% } %>
+
+    <p class="nav-section">Reports</p>
+    <a href="/reports" class="nav-link <%= currentPath === '/reports' ? 'active' : '' %>"><i class="ti ti-chart-bar"></i> Sales report</a>
+
+    <% if (role === 'admin') { %>
+      <p class="nav-section">Admin</p>
+      <a href="/users" class="nav-link <%= currentPath === '/users' ? 'active' : '' %>"><i class="ti ti-users"></i> Users</a>
+      <a href="/audit-log" class="nav-link <%= currentPath === '/audit-log' ? 'active' : '' %>"><i class="ti ti-history"></i> Audit log</a>
+    <% } %>
+  </nav>
+  <div style="margin-top: auto; padding-top: 20px;">
+    <p style="color: #A9C9BC; font-size: 13px; margin: 0 0 8px;"><%= fullName %></p>
+    <a href="/logout" class="nav-link"><i class="ti ti-logout"></i> Log out</a>
+  </div>
+</div>

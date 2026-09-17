@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<%- include('partials/head', { title: 'Edit product' }) %>
+<body>
+  <%- include('partials/header') %>
+  <main>
+    <h2>Edit product</h2>
+    <% if (product.photo_filename) { %>
+      <img src="/uploads/<%= product.photo_filename %>" alt="<%= product.name %>" style="width: 120px; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 16px;">
+    <% } %>
+    <form action="/products/<%= product.product_id %>" method="POST" enctype="multipart/form-data">
+      <label>Name <input type="text" name="name" value="<%= product.name %>" required></label>
+      <label>SKU <input type="text" name="sku" value="<%= product.sku || '' %>"></label>
+      <label>Category <input type="text" name="category" value="<%= product.category || '' %>"></label>
+      <label>Unit price <input type="number" step="0.01" name="unit_price" value="<%= product.unit_price %>" required></label>
+      <label>Quantity in stock <input type="number" name="quantity_in_stock" value="<%= product.quantity_in_stock %>" required></label>
+      <label>Reorder level <input type="number" name="reorder_level" value="<%= product.reorder_level %>"></label>
+      <label>Replace photo <input type="file" name="photo" accept="image/*"></label>
+      <button type="submit" class="btn btn-primary">Save changes</button>
+    </form>
+  </main>
+</body>
+</html>

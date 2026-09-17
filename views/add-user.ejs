@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<%- include('partials/head', { title: 'Add user' }) %>
+<body>
+  <%- include('partials/header') %>
+  <main>
+    <h2>Add a user</h2>
+    <form action="/users" method="POST">
+      <label>Full name <input type="text" name="full_name" required></label>
+      <label>Username <input type="text" name="username" required></label>
+      <label>Password <input type="password" name="password" required></label>
+      <label>Role
+        <select name="role" required>
+          <option value="cashier">Cashier</option>
+          <option value="admin">Admin</option>
+        </select>
+      </label>
+      <button type="submit" class="btn btn-primary">Add user</button>
+    </form>
+  </main>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<%- include('partials/head', { title: 'Dashboard' }) %>
+<body>
+  <%- include('partials/header') %>
+  <main>
+    <h2><%= greeting %></h2>
+    <p class="subtitle">Here's how the shop is doing.</p>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <p class="stat-label"><i class="ti ti-package"></i> Products</p>
+        <p class="stat-value"><%= productCount %></p>
+      </div>
+      <div class="stat-card <%= lowStockItems.length > 0 ? 'warning' : '' %>">
+        <p class="stat-label"><i class="ti ti-alert-triangle"></i> Low on stock</p>
+        <p class="stat-value"><%= lowStockItems.length %></p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label"><i class="ti ti-cash"></i> Sales today</p>
+        <p class="stat-value">NLe <%= Number(salesToday).toFixed(2) %></p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label"><i class="ti ti-coins"></i> Stock value</p>
+        <p class="stat-value">NLe <%= Number(stockValue).toFixed(2) %></p>
+      </div>
+    </div>
+
+    <div class="actions">
+      <a href="/sales/new" class="btn btn-primary"><i class="ti ti-shopping-cart"></i> Record a sale</a>
+      <a href="/products/new" class="btn"><i class="ti ti-plus"></i> Add a product</a>
+    </div>
+
+    <div class="chart-card">
+      <h3>Sales, last 7 days</h3>
+      <canvas id="salesChart" height="80"></canvas>
+    </div>
+
+    <div class="panel-grid">
+      <div class="panel">
+        <h3>Low on stock</h3>
+        <% if (lowStockItems.length === 0) { %>
+          <p class="empty-state">Nothing needs reordering right now.</p>
+        <% } else { %>
+          <% lowStockItems.forEach(function(item) { %>
+            <div class="list-row">
+              <span><%= item.name %></span>
+              <span class="muted"><%= item.quantity_in_stock %> left</span>
+            </div>
+          <% }); %>
+        <% } %>
+      </div>
+
+      <div class="panel">
+        <h3>Recent sales</h3>
+        <% if (recentSales.length === 0) { %>
+          <p class="empty-state">No sales recorded yet.</p>
+        <% } else { %>
+          <% recentSales.forEach(function(sale) { %>
+            <div class="list-row">
+              <span><%= sale.item_count > 1 ? sale.item_count + ' items' : sale.first_product_name %></span>
+              <span class="muted">NLe <%= Number(sale.total_amount).toFixed(2) %></span>
+            </div>
+          <% }); %>
+        <% } %>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+  <script>
+    const ctx = document.getElementById('salesChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: <%- JSON.stringify(chartLabels) %>,
+        datasets: [{
+          label: 'Sales',
+          data: <%- JSON.stringify(chartValues) %>,
+          borderColor: '#16342B',
+          backgroundColor: 'rgba(22, 52, 43, 0.08)',
+          fill: true,
+          tension: 0.3
+        }]
+      },
+      options: {
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+  </script>
+</body>
+</html>

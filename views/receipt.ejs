@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<%- include('partials/head', { title: 'Receipt' }) %>
+<body>
+  <%- include('partials/header') %>
+  <main>
+    <h2>Receipt — sale #<%= sale.sale_id %></h2>
+    <p class="subtitle"><%= sale.sale_date %> · Paid by <%= sale.payment_method === 'mobile_money' ? 'Mobile money' : sale.payment_method === 'card' ? 'Card' : 'Cash' %></p>
+    <table>
+      <tr>
+        <th>Product</th>
+        <th>Quantity</th>
+        <th>Unit price</th>
+        <th>Subtotal</th>
+      </tr>
+      <% items.forEach(function(item) { %>
+        <tr>
+          <td><%= item.product_name %></td>
+          <td><%= item.quantity %></td>
+          <td>NLe <%= item.unit_price %></td>
+          <td>NLe <%= item.subtotal %></td>
+        </tr>
+      <% }); %>
+    </table>
+    <p style="margin-top: 16px; font-size: 18px;"><strong>Total: NLe <%= sale.total_amount %></strong></p>
+    <p class="no-print" style="margin-top: 20px;">
+      <button onclick="window.print()" class="btn"><i class="ti ti-printer"></i> Print receipt</button>
+      <a href="/sales/new" class="btn btn-primary">Record another sale</a>
+    </p>
+  </main>
+</body>
+</html>

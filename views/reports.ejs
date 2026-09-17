@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<%- include('partials/head', { title: 'Reports' }) %>
+<body>
+  <%- include('partials/header') %>
+  <main>
+    <h2>Sales report</h2>
+    <p class="subtitle">Full sales history, filterable by date.</p>
+
+    <form action="/reports" method="GET" style="display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap;">
+      <label style="margin-bottom: 0;">From <input type="date" name="from" value="<%= from %>"></label>
+      <label style="margin-bottom: 0;">To <input type="date" name="to" value="<%= to %>"></label>
+      <button type="submit" class="btn btn-primary">Filter</button>
+      <a href="/reports/export?from=<%= from %>&to=<%= to %>" class="btn"><i class="ti ti-download"></i> Export CSV</a>
+    </form>
+
+    <div class="stat-grid" style="margin: 20px 0 24px;">
+      <div class="stat-card">
+        <p class="stat-label">Sales in this period</p>
+        <p class="stat-value"><%= salesCount %></p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">Revenue in this period</p>
+        <p class="stat-value">NLe <%= Number(salesTotal).toFixed(2) %></p>
+      </div>
+    </div>
+
+    <table>
+      <tr>
+        <th>Date</th>
+        <th>Product</th>
+        <th>Quantity</th>
+        <th>Amount</th>
+      </tr>
+      <% if (sales.length === 0) { %>
+        <tr><td colspan="4" class="empty-state">No sales in this date range.</td></tr>
+      <% } else { %>
+        <% sales.forEach(function(sale) { %>
+          <tr>
+            <td><%= new Date(sale.sale_date).toLocaleDateString() %></td>
+            <td><%= sale.product_name %></td>
+            <td><%= sale.quantity %></td>
+            <td>NLe <%= Number(sale.total_amount).toFixed(2) %></td>
+          </tr>
+        <% }); %>
+      <% } %>
+    </table>
+  </main>
+</body>
+</html>

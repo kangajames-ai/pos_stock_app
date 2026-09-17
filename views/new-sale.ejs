@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<%- include('partials/head', { title: 'Record a sale' }) %>
+<body>
+  <%- include('partials/header') %>
+  <main>
+    <%- include('partials/flash') %>
+    <h2>Record a sale</h2>
+    <p class="subtitle">Search by name or SKU, add products one at a time, then complete the sale.</p>
+
+    <form action="/sales/cart/add" method="POST" style="display: flex; gap: 10px; align-items: flex-end; margin-bottom: 24px; flex-wrap: wrap;">
+      <label style="margin-bottom: 0;">Product
+        <input type="text" id="productSearch" list="productDatalist" placeholder="Type a name or SKU" autocomplete="off" required>
+        <datalist id="productDatalist">
+          <% products.forEach(function(product) { %>
+            <option data-id="<%= product.product_id %>" value="<%= product.name %><%= product.sku ? ' - ' + product.sku : '' %>"></option>
+          <% }); %>
+        </datalist>
+        <input type="hidden" name="product_id" id="selectedProductId">
+      </label>
+      <label style="margin-bottom: 0;">Quantity <input type="number" name="quantity" min="1" value="1" required style="width: 80px;"></label>
+      <button type="submit" class="btn btn-primary"><i class="ti ti-plus"></i> Add to sale</button>
+    </form>
+
+    <h3>Current sale</h3>
+    <% if (cart.length === 0) { %>
+      <p class="empty-state">Nothing added yet.</p>
+    <% } else { %>
+      <table>
+        <tr>
+          <th>Product</th>
+          <th>Quantity</th>
+          <th>Unit price</th>
+          <th>Subtotal</th>
+          <th></th>
+        </tr>
+        <% cart.forEach(function(item) { %>
+          <tr>
+            <td><%= item.name %></td>
+            <td><%= item.quantity %></td>
+            <td>NLe <%= item.unit_price %></td>
+            <td>NLe <%= (item.unit_price * item.quantity).toFixed(2) %></td>
+            <td>
+              <form action="/sales/cart/remove" method="POST" style="display: inline;">
+                <input type="hidden" name="product_id" value="<%= item.product_id %>">
+                <button type="submit" style="border: none; background: none; color: #A32D2D; cursor: pointer; padding: 0; font-size: 14px;"><i class="ti ti-x"></i></button>
+              </form>
+            </td>
+          </tr>
+        <% }); %>
+      </table>
+      <p style="margin-top: 16px; font-size: 18px;"><strong>Total: NLe <%= cartTotal.toFixed(2) %></strong></p>
+      <form action="/sales/checkout" method="POST" style="display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap;">
+        <label style="margin-bottom: 0;">Payment method
+          <select name="payment_method" required>
+            <option value="cash">Cash</option>
+            <option value="mobile_money">Mobile money</option>
+            <option value="card">Card</option>
+          </select>
+        </label>
+        <button type="submit" class="btn btn-primary"><i class="ti ti-check"></i> Complete sale</button>
+      </form>
+    <% } %>
+  </main>
+
+  <script>
+    const productSearch = document.getElementById('productSearch');
+    const selectedProductId = document.getElementById('selectedProductId');
+    const datalistOptions = document.querySelectorAll('#productDatalist option');
+
+    productSearch.addEventListener('input', function() {
+      const match = Array.from(datalistOptions).find(opt => opt.value === this.value);
+      selectedProductId.value = match ? match.getAttribute('data-id') : '';
+    });
+  </script>
+</body>
+</html>

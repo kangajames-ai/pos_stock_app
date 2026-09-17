@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<%- include('partials/head', { title: 'Products' }) %>
+<body>
+  <%- include('partials/header') %>
+  <main>
+    <%- include('partials/flash') %>
+    <h2>Products</h2>
+    <p class="subtitle">Everything currently in stock.</p>
+
+    <form action="/products" method="GET" style="display: flex; gap: 10px; align-items: flex-end; margin-bottom: 20px; flex-wrap: wrap;">
+      <label style="margin-bottom: 0;">Search <input type="text" id="liveSearch" name="search" value="<%= search %>" placeholder="Type to filter instantly"></label>
+      <label style="margin-bottom: 0;">Category
+        <select name="category">
+          <option value="">All categories</option>
+          <% categories.forEach(function(cat) { %>
+            <option value="<%= cat %>" <%= category === cat ? 'selected' : '' %>><%= cat %></option>
+          <% }); %>
+        </select>
+      </label>
+      <button type="submit" class="btn btn-primary">Filter</button>
+      <% if (search || category) { %><a href="/products" class="btn">Clear</a><% } %>
+    </form>
+
+    <% const cardColors = ['#16342B', '#8B5A2B', '#4A5568', '#6B4C7A', '#2C5F6F']; %>
+
+    <% if (products.length === 0) { %>
+      <p class="empty-state">No products match that search.</p>
+    <% } else { %>
+      <div class="product-grid" id="productGrid">
+        <% products.forEach(function(product) { %>
+          <% const cardColor = cardColors[product.product_id % cardColors.length]; %>
+          <% const isLow = product.quantity_in_stock <= product.reorder_level; %>
+          <div class="product-card" data-name="<%= product.name.toLowerCase() %>">
+            <div class="product-card-visual <%= product.photo_filename ? 'has-photo' : '' %>" style="<%= product.photo_filename ? '' : 'background: ' + cardColor + ';' %>">
+              <% if (product.photo_filename) { %>
+                <img src="/uploads/<%= product.photo_filename %>" alt="<%= product.name %>">
+              <% } else { %>
+                <span class="product-initial"><%= product.name.charAt(0).toUpperCase() %></span>
+              <% } %>
+            </div>
+            <div class="product-card-body">
+              <h4><%= product.name %></h4>
+              <p class="product-card-price">NLe <%= product.unit_price %></p>
+              <span class="stock-badge <%= isLow ? 'stock-low' : 'stock-ok' %>"><%= product.quantity_in_stock %> in stock</span>
+              <% if (role === 'admin') { %>
+                <div class="product-card-actions">
+                  <a href="/products/<%= product.product_id %>/edit" class="icon-tooltip" data-tooltip="Edit"><i class="ti ti-edit"></i></a>
+                  <form action="/products/<%= product.product_id %>/delete" method="POST" onsubmit="return confirm('Delete this product? This can\'t be undone.');">
+                    <button type="submit" class="icon-tooltip" data-tooltip="Delete"><i class="ti ti-trash"></i></button>
+                  </form>
+                </div>
+              <% } %>
+            </div>
+          </div>
+        <% }); %>
+      </div>
+    <% } %>
+
+    <% if (role === 'admin') { %>
+      <p style="margin-top: 20px;"><a href="/products/new" class="btn btn-primary"><i class="ti ti-plus"></i> Add a product</a></p>
+    <% } %>
+  </main>
+
+  <script>
+    const searchInput = document.getElementById('liveSearch');
+    const cards = document.querySelectorAll('#productGrid .product-card');
+    searchInput.addEventListener('input', function() {
+      const term = this.value.toLowerCase();
+      cards.forEach(function(card) {
+        card.style.display = card.getAttribute('data-name').includes(term) ? '' : 'none';
+      });
+    });
+  </script>
+</body>
+</html>

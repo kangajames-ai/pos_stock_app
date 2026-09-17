@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<%- include('partials/head', { title: 'Audit log' }) %>
+<body>
+  <%- include('partials/header') %>
+  <main>
+    <h2>Audit log</h2>
+    <p class="subtitle">A record of key actions taken in the system.</p>
+    <table>
+      <tr>
+        <th>When</th>
+        <th>Who</th>
+        <th>Action</th>
+        <th>Details</th>
+      </tr>
+      <% if (entries.length === 0) { %>
+        <tr><td colspan="4" class="empty-state">No activity recorded yet.</td></tr>
+      <% } else { %>
+        <% entries.forEach(function(entry) { %>
+          <tr>
+            <td><%= new Date(entry.created_at).toLocaleString() %></td>
+            <td><%= entry.full_name || 'Unknown' %></td>
+            <td><%= entry.action %></td>
+            <td><%= entry.details %></td>
+          </tr>
+        <% }); %>
+      <% } %>
+    </table>
+  </main>
+</body>
+</html>
